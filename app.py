@@ -3,10 +3,12 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
 from dct import custom_dct2
+from scipy.fftpack import dct as scipy_dct
 
 st.set_page_config(page_title="DCT su Immagini BMP", layout="centered")
 st.title("📐 Caricamento BMP e Trasformata DCT")
-
+window_size = st.text_input("Inserisci la dimensione della finestra")
+d = st.text_input("Inserisci la soglia di taglio delle frequenze. (0<d<2F-2)")
 uploaded_file = st.file_uploader("Carica un file BMP", type=["bmp"])
 
 
@@ -14,10 +16,8 @@ def apply_dct(image: Image.Image) -> np.ndarray:
     # Converti in scala di grigi
     gray = image.convert("L")
     img_array = np.array(gray, dtype=float)
-
     # Applica la DCT 2D
-    dct_log = custom_dct2(img_array)
-
+    dct_log = scipy_dct(img_array, type=2)
     return dct_log
 
 
