@@ -58,7 +58,7 @@ def benchmark_dct2(sizes):
         custom_times.append(time.time() - start)
         # Misura il tempo per la DCT2 di SciPy
         start = time.time()
-        scipy_dct(matrix, type=2, norm=None)
+        scipy_dct(scipy_dct(matrix, type=2, norm=None, axis = 0), type=2, norm=None, axis = 1)
         scipy_times.append(time.time() - start)
 
     return custom_times, scipy_times
