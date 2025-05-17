@@ -11,10 +11,11 @@ import matplotlib.patches as mpatches
 # Configurazione pagina
 st.set_page_config(page_title="DCT su Immagini BMP", layout="centered")
 st.title("📐 Caricamento BMP e Trasformata DCT")
-uploaded_file = st.file_uploader("Carica un file BMP", type=["bmp"])
-window_size = st.text_input("Inserisci la dimensione della finestra (F)")
-d_thresh    = st.text_input("Inserisci la soglia di taglio delle frequenze d (0 ≤ d ≤ 2F-2)")
 
+uploaded_file = st.file_uploader("Carica un file BMP", type=["bmp"])
+
+window_size = st.number_input("Inserisci la dimensione della finestra (F)", min_value=1,value=10)
+d_thresh = st.number_input("Inserisci la soglia di taglio delle frequenze d (0 ≤ d ≤ 2F-2)", min_value=1)
 if uploaded_file:
     #Caricamento e conversione dell'immagine in scala di grigi
     img = Image.open(io.BytesIO(uploaded_file.read())).convert("L")
