@@ -69,7 +69,7 @@ def plot_performance():
     Genera un grafico delle prestazioni in scala semilogaritmica
     """
     # Dimensioni delle matrici da testare
-    sizes = [8, 16, 32]
+    sizes = [8, 16, 32, 64, 128]
     custom_times, scipy_times = benchmark_dct2(sizes)
 
     plt.figure(figsize=(10, 6))
