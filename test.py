@@ -1,11 +1,7 @@
 
 import numpy as np
-# Utilizziamo scipy.fftpack come richiesto dall'utente
-# idct importata ma non usata per la verifica
-from scipy.fftpack import dct
-
+from dct_utilis import scipy_dct2
 # --- Dati forniti dall'utente ---
-
 # Matrice di input 8x8
 input_matrix = np.array([
     [231, 32, 233, 161, 24, 71, 140, 245],
@@ -17,7 +13,6 @@ input_matrix = np.array([
     [193, 70, 174, 167, 41, 30, 127, 245],
     [87, 149, 57, 192, 65, 129, 178, 228]
 ], dtype=float)
-
 # Output atteso della DCT-II 2D (normalizzazione ortogonale)
 expected_dct2_matrix = np.array([
     [1.11e+03, 4.40e+01, 7.59e+01, -1.38e+02,
@@ -47,24 +42,20 @@ expected_dct1_row1 = np.array([
     1.21e+02, 1.16e+02, 2.88e+01
 ], dtype=float)
 
-
-# --- Eseguire le trasformazioni e verificare ---
-
 print("Eseguendo le trasformazioni con scipy.fftpack.dct e confrontando i risultati...")
 
 # Calcola la DCT-II 1D della prima riga usando scipy, con normalizzazione ortogonale
 # type=2 specifica la DCT-II standard
+from scipy.fftpack import dct
 computed_dct1_row1 = dct(first_row, norm='ortho')
 
 # Calcola la DCT-II 2D dell'intera matrice usando scipy.
 # Per la 2D con la funzione 1D dct di fftpack, la si applica prima per le colonne (axis=0)
 # e poi sul risultato per le righe (axis=1), mantenendo la normalizzazione.
-computed_dct2_matrix = dct(dct(input_matrix, axis=0, norm='ortho'),
-                           axis=1, norm='ortho')
-
+computed_dct2_matrix = scipy_dct2(input_matrix)
+                          
 
 # Confronta i risultati usando np.allclose per gestire le imprecisioni floating point.
-
 rtol = 1e-4
 atol = 1e-4
 is_dct1_match = np.allclose(
@@ -73,10 +64,7 @@ is_dct1_match = np.allclose(
 is_dct2_match = np.allclose(
     computed_dct2_matrix, expected_dct2_matrix, rtol=rtol, atol=atol
 )
-
-
 # --- Output dei risultati della verifica con dettagli in caso di fallimento ---
-
 print(
     f"\n--- Verifica DCT-II 1D (Prima Riga, Tolleranza rtol={rtol}, atol={atol}) ---")
 if is_dct1_match:
@@ -88,8 +76,6 @@ else:
     print("\nRisultato Atteso (1D):\n", expected_dct1_row1)
     print("\nDifferenza Assoluta Massima (1D):", np.max(
         np.abs(computed_dct1_row1 - expected_dct1_row1)))
-
-
 print(
     f"\n--- Verifica DCT-II 2D (Matrice Completa, Tolleranza rtol={rtol}, atol={atol}) ---")
 if is_dct2_match:
@@ -101,6 +87,4 @@ else:
     print("\nRisultato Atteso (2D):\n", expected_dct2_matrix)
     print("\nDifferenza Assoluta Massima (2D):", np.max(
         np.abs(computed_dct2_matrix - expected_dct2_matrix)))
-
-
 print("\nVerifica completata.")
