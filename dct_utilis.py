@@ -14,45 +14,39 @@ def one_dim_dct2(vector):
       The 1D DCT-II of the input vector.
     """
     N = len(vector)
+    vector = np.asarray(vector, dtype=float)
     dct_vector = np.zeros(N, dtype=float)
 
-    for k in range(N):
-        ck = 1.0 / np.sqrt(N) if k == 0 else np.sqrt(2.0 / N)
-        sum_val = 0.0
-        for n in range(N):
-            sum_val += vector[n] * np.cos(((2 * n + 1) * k * np.pi) / (2 * N))
-        dct_vector[k] = ck * sum_val
+    # Precompute normalization factors ck
+    ck = np.sqrt(2.0 / N) * np.ones(N)
+    ck[0] = 1.0 / np.sqrt(N)
+
+    # Precompute cosine terms
+    cos_table = np.cos(
+        np.pi * np.outer(2 * np.arange(N) + 1, np.arange(N)) / (2 * N))
+
+    # Matrix-style computation for better cache efficiency
+    dct_vector = ck * np.dot(cos_table.T, vector)
 
     return dct_vector
 
 
 def custom_dct2(matrix):
     """
-    Computes the 2D DCT-II of a matrix using the separable property
-    and the direct 1D DCT-II implementation.
-
-    Args:
-      matrix: A 2D NumPy array (must be square, N x N).
-
-    Returns:
-      The 2D DCT-II of the input matrix.
+    Computes the 2D DCT-II of a square matrix using the separable property
+    and an optimized 1D DCT-II implementation.
     """
-    N = matrix.shape[0]
-    if matrix.shape[1] != N:
+    N, M = matrix.shape
+    if N != M:
         raise ValueError("Input matrix must be square.")
 
-    # Step 1: Apply 1D DCT to each row
-    intermediate_matrix = np.zeros_like(matrix, dtype=float)
-    for i in range(N):
-        intermediate_matrix[i, :] = one_dim_dct2(matrix[i, :])
+    # First DCT along rows
+    temp = np.apply_along_axis(one_dim_dct2, axis=1, arr=matrix)
 
-    # Step 2: Apply 1D DCT to each column of the intermediate matrix
-    result_matrix = np.zeros_like(matrix, dtype=float)
+    # Then DCT along columns
+    result = np.apply_along_axis(one_dim_dct2, axis=0, arr=temp)
 
-    for j in range(N):
-        result_matrix[:, j] = one_dim_dct2(intermediate_matrix[:, j])
-
-    return result_matrix
+    return result
 
 
 def scipy_dct2(matrix):
