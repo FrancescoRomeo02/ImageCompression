@@ -1,8 +1,6 @@
 
 import numpy as np
 from dct_utilis import scipy_dct2
-# --- Dati forniti dall'utente ---
-# Matrice di input 8x8
 input_matrix = np.array([
     [231, 32, 233, 161, 24, 71, 140, 245],
     [247, 40, 248, 245, 124, 204, 36, 107],
@@ -13,7 +11,7 @@ input_matrix = np.array([
     [193, 70, 174, 167, 41, 30, 127, 245],
     [87, 149, 57, 192, 65, 129, 178, 228]
 ], dtype=float)
-# Output atteso della DCT-II 2D (normalizzazione ortogonale)
+
 expected_dct2_matrix = np.array([
     [1.11e+03, 4.40e+01, 7.59e+01, -1.38e+02,
      3.50e+00, 1.22e+02, 1.95e+02, -1.01e+02],
