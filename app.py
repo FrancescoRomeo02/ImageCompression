@@ -3,10 +3,9 @@ import numpy as np
 from PIL import Image
 import io
 import matplotlib.pyplot as plt
-from scipy.fftpack import dct, idct
 from matplotlib.colors import ListedColormap
 import matplotlib.patches as mpatches
-
+from dct_utils import scipy_dct2,idct2
 
 # Configurazione pagina
 st.set_page_config(page_title="DCT su Immagini BMP", layout="centered")
@@ -17,6 +16,9 @@ uploaded_file = st.file_uploader("Carica un file BMP", type=["bmp"])
 F = st.number_input("Inserisci la dimensione della finestra (F)", min_value=1,value=10)
 # Soglia di taglio
 d = st.number_input("Inserisci la soglia di taglio delle frequenze d (0 ≤ d ≤ 2F-2)", min_value=1)
+
+assert 0 <= d <= 2 * F - 2, "La soglia d deve essere compresa tra 0 e 2F-2"
+
 if uploaded_file:
     # Caricamento immagine e conversione in scala di grigi
     img = Image.open(io.BytesIO(uploaded_file.read())).convert("L")
@@ -27,12 +29,6 @@ if uploaded_file:
 
     # Visualizza i parametri scelti
     st.write(f"Blocchi: {F}×{F}, soglia d={d}")
-
-    # Funzioni DCT 2D
-    def dct2(block): return dct(dct(block.T, norm='ortho').T, norm='ortho')
-
-    def idct2(coeffs): return idct(
-        idct(coeffs.T, norm='ortho').T, norm='ortho')
 
     # Ritaglio immagine per divisibilità: deve essere divisibile per F
     H2, W2 = (H // F) * F, (W // F) * F
@@ -51,7 +47,7 @@ if uploaded_file:
             # Estrazione del blocco
             block = arr_crop[bi:bi+F, bj:bj+F].astype(float)
             # Calcolo DCT
-            C = dct2(block)
+            C = scipy_dct2(block)
             # Applicazione della maschera
             C[c] = 0.0
             # Ricostruzione del blocco
