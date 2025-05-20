@@ -1,6 +1,7 @@
 import numpy as np
 import time
-from dct_utilis import scipy_dct2, custom_dct2
+from dct_utilis import custom_dct2
+from scipy.fft import dctn
 
 
 def benchmark_dct2(sizes):
@@ -12,6 +13,6 @@ def benchmark_dct2(sizes):
         custom_dct2(matrix)
         custom_times.append(time.perf_counter() - start)
         start = time.perf_counter()
-        scipy_dct2(matrix)
+        dctn(matrix, norm='ortho')
         scipy_times.append(time.perf_counter() - start)
     return custom_times, scipy_times

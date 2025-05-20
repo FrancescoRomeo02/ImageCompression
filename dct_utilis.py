@@ -1,6 +1,4 @@
 import numpy as np
-from scipy.fftpack import dct as scipy_dct
-from scipy.fftpack import idct as scipy_idct
 
 
 def one_dim_dct2(vector):
@@ -48,30 +46,3 @@ def custom_dct2(matrix):
     result = np.apply_along_axis(one_dim_dct2, axis=0, arr=temp)
 
     return result
-
-
-def scipy_dct2(matrix):
-    """
-    Computes 2D DCT of a matrix using the scipy method-
-
-    Args:
-      matrix: A 2 Numpy array (must be square, N x N).
-
-    Returns:
-      The 2D DCT of the input matrix
-    """
-    return scipy_dct(scipy_dct(matrix.T, norm='ortho').T, norm='ortho')
-
-
-def idct2(coeffs):
-    """
-    Computes 2D IDCT of a matrix using the scipy method-
-
-    Args:
-      matrix: A 2 Numpy array (must be square, N x N).
-
-    Returns:
-      The 2D IDCT of the input matrix
-    """
-
-    return scipy_idct(scipy_idct(coeffs.T, norm='ortho').T, norm='ortho')

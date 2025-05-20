@@ -3,7 +3,7 @@ from plot_utils import plot_performance
 
 
 def main():
-    sizes = [2**i for i in range(5, 13)]
+    sizes = [2**i for i in range(4, 11)]
     custom_times, scipy_times = benchmark_dct2(sizes)
     plot_performance(sizes, custom_times, scipy_times)
 

@@ -3,7 +3,7 @@ import numpy as np
 
 
 def plot_performance(sizes, custom_times, scipy_times,
-                     save_path='plot/dct2_performance_comparison.png'):
+                     save_path='./image.png'):
     """
     Genera un grafico semilogaritmico delle prestazioni della DCT2 personalizzata
     e SciPy, includendo curve teoriche 𝒪(N^3) e 𝒪(N^2 log N) riscalate per confronto visivo.

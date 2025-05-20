@@ -5,17 +5,17 @@ import io
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 import matplotlib.patches as mpatches
-from dct_utilis import scipy_dct2, idct2
+from scipy.fft import dctn, idctn
 
-# Configurazione pagina
+# Configurazione della pagina Streamlit
 st.set_page_config(page_title="DCT su Immagini BMP", layout="centered")
 st.title("Trasformata DCT-II su Immagini BMP")
 
-# Caricamento immagine
+# Caricamento immagine BMP
 uploaded_file = st.file_uploader("Carica un file BMP", type=["bmp"])
 
 if uploaded_file:
-    # Carica immagine in scala di grigi
+    # Converte l'immagine in scala di grigi
     img = Image.open(io.BytesIO(uploaded_file.read())).convert("L")
     arr = np.array(img)
     H, W = arr.shape
@@ -23,40 +23,40 @@ if uploaded_file:
 
     max_F = min(H, W)
 
-    # Parametri di compressione visibili solo dopo upload
+    # Parametri di compressione
     F = st.number_input("Dimensione del blocco F",
                         min_value=1, max_value=max_F, value=10, step=1)
     max_d = 2 * F - 2
     d = st.slider(f"Soglia di taglio delle frequenze d (0 ≤ d ≤ {
                   max_d})", min_value=0, max_value=max_d, value=min(10, max_d))
 
-    # Adattamento dell'immagine per essere divisibile per F
+    # Ritaglio dell'immagine per essere divisibile per F
     H2, W2 = (H // F) * F, (W // F) * F
     arr_crop = arr[:H2, :W2]
     out = np.zeros_like(arr_crop)
 
-    # Maschera per taglio delle frequenze (k + l ≥ d)
+    # Creazione della maschera (k + l ≥ d → azzeramento)
     k, l = np.arange(F)[:, None], np.arange(F)[None, :]
     mask = (k + l) >= d
 
-    # Elaborazione per blocchi
+    # Applicazione DCT blocco per blocco
     for bi in range(0, H2, F):
         for bj in range(0, W2, F):
             block = arr_crop[bi:bi+F, bj:bj+F].astype(float)
-            C = scipy_dct2(block)
+            C = dctn(block, norm='ortho')
             C[mask] = 0.0
-            rec = np.rint(idct2(C)).astype(int)
+            rec = np.rint(idctn(C, norm='ortho')).astype(int)
             rec = np.clip(rec, 0, 255)
             out[bi:bi+F, bj:bj+F] = rec
 
-    # Visualizzazione immagini
+    # Visualizzazione immagini originali e ricostruite
     col1, col2 = st.columns(2)
     col1.image(arr_crop, caption="Immagine originale",
                clamp=True, channels="L")
     col2.image(out, caption=f"Immagine ricostruita (F = {
                F}, d = {d})", clamp=True, channels="L")
 
-    # Visualizzazione della maschera
+    # Visualizzazione maschera di compressione
     c_viz = mask.astype(int)
     cmap = ListedColormap(['yellow', 'red'])
 
