@@ -5,89 +5,79 @@ import io
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 import matplotlib.patches as mpatches
-from dct_utils import scipy_dct2,idct2
+from dct_utilis import scipy_dct2, idct2
 
 # Configurazione pagina
 st.set_page_config(page_title="DCT su Immagini BMP", layout="centered")
-st.title("📐 Caricamento BMP e Trasformata DCT")
+st.title("Trasformata DCT-II su Immagini BMP")
 
+# Caricamento immagine
 uploaded_file = st.file_uploader("Carica un file BMP", type=["bmp"])
-#Dimensione della finestra
-F = st.number_input("Inserisci la dimensione della finestra (F)", min_value=1,value=10)
-# Soglia di taglio
-d = st.number_input("Inserisci la soglia di taglio delle frequenze d (0 ≤ d ≤ 2F-2)", min_value=1)
-
-assert 0 <= d <= 2 * F - 2, "La soglia d deve essere compresa tra 0 e 2F-2"
 
 if uploaded_file:
-    # Caricamento immagine e conversione in scala di grigi
+    # Carica immagine in scala di grigi
     img = Image.open(io.BytesIO(uploaded_file.read())).convert("L")
     arr = np.array(img)
     H, W = arr.shape
-    st.success(f"Dimensione immagine: {W}×{H} px")
+    st.write(f"Dimensione immagine: {W} × {H} px")
+
     max_F = min(H, W)
 
-    # Visualizza i parametri scelti
-    st.write(f"Blocchi: {F}×{F}, soglia d={d}")
+    # Parametri di compressione visibili solo dopo upload
+    F = st.number_input("Dimensione del blocco F",
+                        min_value=1, max_value=max_F, value=10, step=1)
+    max_d = 2 * F - 2
+    d = st.slider(f"Soglia di taglio delle frequenze d (0 ≤ d ≤ {
+                  max_d})", min_value=0, max_value=max_d, value=min(10, max_d))
 
-    # Ritaglio immagine per divisibilità: deve essere divisibile per F
+    # Adattamento dell'immagine per essere divisibile per F
     H2, W2 = (H // F) * F, (W // F) * F
-    # Ritaglio dell'immagine
     arr_crop = arr[:H2, :W2]
-    # Inizializzazione matrice di output
     out = np.zeros_like(arr_crop)
 
-    # Maschera: True se coefficiente da azzerare
+    # Maschera per taglio delle frequenze (k + l ≥ d)
     k, l = np.arange(F)[:, None], np.arange(F)[None, :]
-    # Condizione per azzeramento
-    c = (k + l) >= d
-    # Applicazione della DCT e maschera
+    mask = (k + l) >= d
+
+    # Elaborazione per blocchi
     for bi in range(0, H2, F):
         for bj in range(0, W2, F):
-            # Estrazione del blocco
             block = arr_crop[bi:bi+F, bj:bj+F].astype(float)
-            # Calcolo DCT
             C = scipy_dct2(block)
-            # Applicazione della maschera
-            C[c] = 0.0
-            # Ricostruzione del blocco
+            C[mask] = 0.0
             rec = np.rint(idct2(C)).astype(int)
             rec = np.clip(rec, 0, 255)
-            # Assegnazione del blocco ricostruito
             out[bi:bi+F, bj:bj+F] = rec
 
     # Visualizzazione immagini
     col1, col2 = st.columns(2)
-    col1.image(arr_crop, caption="Originale", clamp=True,
-               channels="L")
-    col2.image(out, caption=f"Ricostruita (F={F}, d={
-               d})", clamp=True, channels="L")
+    col1.image(arr_crop, caption="Immagine originale",
+               clamp=True, channels="L")
+    col2.image(out, caption=f"Immagine ricostruita (F = {
+               F}, d = {d})", clamp=True, channels="L")
 
-# Visualizzazione maschera
-    c_viz = np.where((k + l) >= d, 1, 0)
+    # Visualizzazione della maschera
+    c_viz = mask.astype(int)
     cmap = ListedColormap(['yellow', 'red'])
-    fig, ax = plt.subplots(figsize=(5, 5))
 
+    fig, ax = plt.subplots(figsize=(5, 5))
     im = ax.imshow(c_viz, cmap=cmap, origin='upper', interpolation='none')
 
-# Linee della griglia tra i pixel
-    ax.set_xticks(np.arange(-.5, F, 1), minor=True)
-    ax.set_yticks(np.arange(-.5, F, 1), minor=True)
+    ax.set_xticks(np.arange(0, F))
+    ax.set_yticks(np.arange(0, F))
+    ax.set_xticklabels(np.arange(0, F))
+    ax.set_yticklabels(np.arange(0, F))
+    ax.set_xticks(np.arange(-0.5, F, 1), minor=True)
+    ax.set_yticks(np.arange(-0.5, F, 1), minor=True)
     ax.grid(which='minor', color='black', linestyle='-', linewidth=0.5)
     ax.tick_params(which='minor', bottom=False, left=False)
 
-# Etichette principali
-    ax.set_xticks(np.arange(0, F, 1))
-    ax.set_yticks(np.arange(0, F, 1))
-    ax.set_xticklabels(np.arange(0, F, 1))
-    ax.set_yticklabels(np.arange(0, F, 1))
-
     ax.set_xlabel('l (indice di frequenza)')
     ax.set_ylabel('k (indice di frequenza)')
-    ax.set_title(f'Maschera DCT: soglia per k+l ≥ {d}')
+    ax.set_title(f'Maschera di compressione (k + l ≥ {d})')
 
-    rosso = mpatches.Patch(color='red', label='azzerato')
-    giallo = mpatches.Patch(color='yellow', label='mantenuto')
+    rosso = mpatches.Patch(color='red', label='Azzerato')
+    giallo = mpatches.Patch(color='yellow', label='Mantenuto')
     ax.legend(handles=[rosso, giallo], loc='upper right')
 
     st.pyplot(fig)
