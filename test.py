@@ -46,11 +46,31 @@ print("Eseguendo le trasformazioni con scipy.fft.dct e confrontando i risultati.
 # type=2 specifica la DCT-II standard
 computed_dct1_row1 = dct(first_row, norm='ortho')
 
+for i in range(len(computed_dct1_row1)):
+    print(f"Elemento {i}: Calcolato = {computed_dct1_row1[i]:.7e}, Atteso = {expected_dct1_row1[i]:.7e}, Differenza = {(computed_dct1_row1[i] - expected_dct1_row1[i]):.7e}")
+
 # Calcola la DCT-II 2D dell'intera matrice usando scipy.
 # Per la 2D con la funzione 1D dct di fftpack, la si applica prima per le colonne (axis=0)
 # e poi sul risultato per le righe (axis=1), mantenendo la normalizzazione.
+print()
+print()
 computed_dct2_matrix = dctn(input_matrix, norm='ortho')
+# Stampo i risultati da (0, 0) a (0, 7)
+for j in range(8):
+    i = 0
+    print(f"Elemento [{i}, {j}]: Calcolato = {computed_dct2_matrix[i, j]:.7e}, Atteso = {expected_dct2_matrix[i, j]:.7e}, Differenza = {(computed_dct2_matrix[i, j] - expected_dct2_matrix[i, j]):.7e}")
 
+
+print(f"Elemento [{7}, {7}]: Calcolato = {computed_dct2_matrix[7, 7]:.7e}, Atteso = {expected_dct2_matrix[7, 7]:.7e}, Differenza = {(computed_dct2_matrix[7, 7] - expected_dct2_matrix[7, 7]):.7e}")
+# stampo errore quadratico medio (MSE) per la DCT-II 2D
+mse_dct2 = np.mean((computed_dct2_matrix - expected_dct2_matrix) ** 2)
+print(f"\nErrore Quadratico Medio (MSE) per la DCT-II 2D: {mse_dct2:.7e}")
+
+# stampo errore relativo massimo (Max Relative Error) per la DCT-II 2D
+max_relative_error_dct2 = np.max(
+    np.abs((computed_dct2_matrix - expected_dct2_matrix) / expected_dct2_matrix)
+)
+print(f"Errore Relativo Massimo per la DCT-II 2D: {max_relative_error_dct2:.7e}")
 
 # Confronta i risultati usando np.allclose per gestire le imprecisioni floating point.
 rtol = 1e-2

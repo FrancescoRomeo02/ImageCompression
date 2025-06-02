@@ -23,7 +23,7 @@ def plot_performance(sizes, custom_times, scipy_times,
     plt.semilogy(sizes, custom_times, 'bo-', label='DCT2 Personalizzata')
     plt.semilogy(sizes, scipy_times, 'ro-', label='DCT2 SciPy')
 
-    # Curve teoriche normalizzate
+    # Curve teoriche normalizzascipy.fft.tscipy.fft.e
     n_vals = np.array(sizes)
     n3_raw = n_vals**3
     n2logn_raw = n_vals**2 * np.log2(n_vals)
