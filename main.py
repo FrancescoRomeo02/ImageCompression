@@ -1,12 +1,30 @@
-from benchmark import benchmark_dct2
-from plot_utils import plot_performance
-from log_benchmark_csv import save_benchmark_csv
-
 def main():
-    sizes = [2**i for i in range(5, 13)]
-    custom_times, scipy_times = benchmark_dct2(sizes)
-    plot_performance(sizes, custom_times, scipy_times)
-    save_benchmark_csv(custom_times, scipy_times, sizes)
+    """
+    Main entry point for the project.
+    Offers high-level control (menu/dispatch).
+    """
+    print("Welcome to ImageCompression!")
+    print("Choose an option:")
+    print("1. Run benchmark")
+    print("2. Launch Streamlit app")
+    print("3. Exit")
+
+    choice = input("Enter your choice (1-3): ")
+
+    if choice == '1':
+        from scripts.run_benchmark import main as run_benchmark_main
+        run_benchmark_main()
+
+    elif choice == '2':
+        import os
+        os.system("streamlit run dct_streamlit_app/app.py")
+
+    elif choice == '3':
+        print("Exiting...")
+
+    else:
+        print("Invalid choice. Please select 1, 2 or 3.")
+
 
 if __name__ == '__main__':
     main()
