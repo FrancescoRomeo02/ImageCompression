@@ -4,7 +4,7 @@ from imagecompression.io import save_benchmark_csv
 import datetime
 
 def main():
-    sizes = [2**i for i in range(3, 13)] 
+    sizes = [2**i for i in range(4, 11)] 
     seed = 42
 
     print("Running DCT2 benchmark...")
