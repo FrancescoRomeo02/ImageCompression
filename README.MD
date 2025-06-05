@@ -18,7 +18,7 @@ Questo progetto offre strumenti per la compressione di immagini tramite la **Tra
 - **Visualizzazione grafica** dei risultati di benchmark
 - **Webapp Streamlit** per comprimere immagini BMP in scala di grigi, con download e visualizzazione maschera di compressione
 
-## ▶️ Come usare
+## ▶️ Come si usa
 
 ### 1. Main Menu
 
@@ -26,9 +26,9 @@ Esegui il menu principale:
 ```bash
 python main.py
 ```
-Scegli l’opzione "Run benchmark" per generare risultati e grafici in `results/`.
-Scegli l'opzione "Run webapp" per avviare l'applicazione Streamlit.
-Scgli l'opzione "Run tests" per eseguire i test di verifica della DCT.
+- Scegli l’opzione "Run benchmark" per generare risultati e grafici in `results/`.
+- Scegli l'opzione "Run webapp" per avviare l'applicazione Streamlit.
+- Scegli l'opzione "Run tests" per eseguire i test di verifica della DCT.
 
 
 ## 📦 Requisiti
