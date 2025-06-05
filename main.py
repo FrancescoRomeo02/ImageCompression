@@ -7,7 +7,8 @@ def main():
     print("Choose an option:")
     print("1. Run benchmark")
     print("2. Launch Streamlit app")
-    print("3. Exit")
+    print("3. Run Test Suite")
+    print("4. Exit")
 
     choice = input("Enter your choice (1-3): ")
 
@@ -18,6 +19,10 @@ def main():
     elif choice == '2':
         import os
         os.system("streamlit run dct_streamlit_app/app.py")
+
+    elif choice == '3':
+        import os
+        os.system("python3 tests/test.py")
 
     elif choice == '3':
         print("Exiting...")
