@@ -20,29 +20,16 @@ Questo progetto offre strumenti per la compressione di immagini tramite la **Tra
 
 ## ▶️ Come usare
 
-### 1. Benchmark e confronto prestazioni
+### 1. Main Menu
 
 Esegui il menu principale:
 ```bash
 python main.py
 ```
 Scegli l’opzione "Run benchmark" per generare risultati e grafici in `results/`.
-Oppure l'opzione "Run webapp" per avviare l'applicazione Streamlit.
+Scegli l'opzione "Run webapp" per avviare l'applicazione Streamlit.
+Scgli l'opzione "Run tests" per eseguire i test di verifica della DCT.
 
-### 2. Webapp Streamlit
-
-Per avviare l’applicazione web:
-```bash
-streamlit run dct_streamlit_app/app.py
-```
-Carica una immagine BMP in scala di grigi, scegli i parametri e scarica l’immagine compressa.
-
-### 3. Test
-
-Per eseguire i test:
-```bash
-python tests/test.py
-```
 
 ## 📦 Requisiti
 
